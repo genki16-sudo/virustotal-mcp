@@ -32,8 +32,11 @@ RUN git clone --quiet https://github.com/barvhaim/virustotal-mcp-server.git /tmp
 RUN sed -i 's/port=8000/port=int(os.getenv("PORT", "8000"))/' /app/main.py \
  && grep -q 'os.getenv("PORT"' /app/main.py
 
-# stdio DEGIL: web servisi olarak HTTP/SSE konusmali
-ENV MCP_TRANSPORT=sse
+# stdio DEGIL: web servisi olarak HTTP konusmali.
+# SSE SECILMEDI: Render proxy'si uzun omurlu SSE akisini tutuyor -> /sse hic yanit
+# basligi dondurmuyor (curl 20 sn bosuna bekliyor), Osiris de "fetch failed" diyor.
+# streamable-http normal istek/yanit oldugu icin proxy arkasinda calisir; uc: /mcp
+ENV MCP_TRANSPORT=streamable-http
 ENV PORT=8000
 EXPOSE 8000
 
