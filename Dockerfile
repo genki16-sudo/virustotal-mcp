@@ -2,10 +2,14 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y git ca-certificates && update-ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+
+# uv paket yöneticisini yükle
+RUN pip install --no-cache-dir uv
 
 COPY . /app
 
-RUN pip install --no-cache-dir .
+# Bağımlılıkları uv ile sistem seviyesinde kur
+RUN uv pip install --system .
 
 ENTRYPOINT ["python", "-m", "virustotal_mcp"]
