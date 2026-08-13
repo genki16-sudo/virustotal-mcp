@@ -2,14 +2,12 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+# Git ve SSL sertifikalarını yükle
+RUN apt-get update && apt-get install -y git ca-certificates && update-ca-certificates && rm -rf /var/lib/apt/lists/*
 
-# uv paket yöneticisini yükle
-RUN pip install --no-cache-dir uv
+# Orijinal VirusTotal MCP paketini doğrudan GitHub'dan yükle
+RUN pip install --no-cache-dir git+https://github.com/barvhaim/virustotal-mcp-server.git
 
-COPY . /app
-
-# Bağımlılıkları uv ile sistem seviyesinde kur
-RUN uv pip install --system .
+ENV MCP_TRANSPORT=stdio
 
 ENTRYPOINT ["python", "-m", "virustotal_mcp"]
